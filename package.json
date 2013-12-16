@@ -2,7 +2,7 @@
   "name": "nodechat",
   "version": "0.1.0",
   "description": "Chat example for learning purposes",
-  "main": "server.js",
+  "main": "app.js",
   "repository": "",
   "author": "Mario Pérez Esteso <mario@geekytheory.com>",
   "dependencies": {
