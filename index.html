@@ -4,38 +4,90 @@
             Node.js chat
         </title>
         <style>
-            #chat{
-                height:500px;
-            }
             #contentWrap{
                 display: none;
             }
             #chatWrap{
                 float: left;
             }
+            #chat{
+                position: relative;
+                width: 100%;
+                float:left;
+                min-height:100px;
+                height: 90%;
+                overflow: auto;
+            }
         </style>
+        
+        <script src="https://code.jquery.com/jquery.js"></script>
+        
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+        
     </head>
     <body>
-        <div id="nickWrap">
-            <p>Enter a username:</p>
-            <p id="nickError"></p>
-            <form id="setNick">
-                <input size="35" id="nickname"></input>
-                <input type="submit"></input>
-            </form>
-        </div>
     
-        <div id="contentWrap">
-            <div id="chatWrap">
-                <div id="chat"></div>
-                <form id="send-message">
-                    <input size="35" id="message"></input>
-                    <input type="submit"></input>
-                </form>
+        <div class="container">
+        
+            <div class="page-header">
+                <h1>Node.js Chat <small> Developed by <a href="http://geekytheory.com" target="_blank">Geeky Theory</a></small></h1>
             </div>
-            <div id="users"></div>
+            
+            <div class="input-group" style="width:300px;text-align:center;margin:0 auto;" id="nickWrap">
+                <input id="nickname" class="form-control input-lg" type="text" placeholder="Enter your username">
+                <span class="input-group-btn">
+                    <button class="btn btn-lg btn-primary" type="submit" id="setNick">OK</button>
+                </span>
+            </div>
+            <div class="alert fade in alert-danger alert-dismissable" data-dismiss="alert" id="login-error" style="display:none;">
+                <button type="button" class="close" id="closeAlert">×</button>
+                That username is already taken. Try again.
+            </div>
+            
+            <div id="contentWrap" class="row" style="height: 70%;">
+                <div class="col-md-2"></div>
+                <div id="chatWrap"  class="col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Chat</div>
+                        <div id="chat" class="panel-body"></div>
+                    </div>
+                    
+                    <div>
+                        <form id="send-message" class="input-group" style="text-align:center;margin:0 auto;">
+                        <input id="message" class="form-control input-lg" type="text">
+                        <span class="input-group-btn">
+                            <button class="btn btn-lg btn-primary" type="submit">Send</button>
+                        </span>
+                        </form>
+                    </div>
+                    
+                    <!--
+                        <input size="35" id="message"></input>
+                        <input type="submit"></input>
+                    </form>-->
+                </div>
+                
+                
+                
+                <div class="col-md-2">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Users
+                        </div>
+                        <div id="users" class="panel-body"></div>
+                    </div>
+                </div>
+                
+            </div>
+            
         </div>
-        <script src="https://code.jquery.com/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
             jQuery(function($) {
@@ -43,28 +95,35 @@
                var $messageForm = $('#send-message');
                var $messageBox = $('#message');
                var $chat = $('#chat');
+               var $buttonSend = $('#send');
                
                var $nickForm = $('#setNick');
-               var $nickError = $('#nickError');
                var $nickBox = $('#nickname');
                var $users = $('#users');
+               var $closeAlert = $('#closeAlert');
                
-               $nickForm.submit(function(e) {
+               
+               
+               $nickForm.click(function(e) {
                    e.preventDefault();
                    socket.emit('new user', $nickBox.val(), function(data) {
                        if(data) {
                            $('#nickWrap').hide();
                            $('#contentWrap').show();
                        } else {
-                           $nickError.html('That username is already taken. Try again.');
+                           $("#login-error").show();
                        }
                    });
                    $nickBox.val('');
-               })
+               });
+               
+               $closeAlert.click(function(e) {
+                    $("#login-error").hide();
+               });
                
                $messageForm.submit(function(e) {
                    e.preventDefault();
-                   socket.emit('send message', $messageBox.val());
+                   if($messageBox.val()!='') socket.emit('send message', $messageBox.val());
                    $messageBox.val('');
                });
                
@@ -81,6 +140,7 @@
                 });
                
             });
+            
         </script>
     </body>
 </html>
