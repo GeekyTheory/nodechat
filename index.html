@@ -133,8 +133,8 @@
                
                socket.on('usernames', function(data) {
                     var html = '';
-                    for (i=0; i< data.length; i++) {
-                        html += data[i] + '<br/>';
+                    for (var username in data) {
+                        html += username + '<br/>';
                     }
                     $users.html(html);
                 });
